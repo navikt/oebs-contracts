@@ -1,4 +1,4 @@
-# oebs-schemas
+# oebs-contracts
 
 Shared contracts for the OEBS domain — Avro schemas for Kafka topics and (later) OpenAPI specifications.
 
