@@ -1,0 +1,26 @@
+{
+  "type": "record",
+  "name": "Ordre",
+  "namespace": "no.nav.oebs.ordre",
+  "fields": [
+    {
+      "name": "ordreId",
+      "type": "string",
+      "doc": "Unik identifikator for ordren"
+    },
+    {
+      "name": "beskrivelse",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Beskrivelse av ordren"
+    },
+    {
+      "name": "opprettetTidspunkt",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      },
+      "doc": "Tidspunkt ordren ble opprettet (epoch millisekunder)"
+    }
+  ]
+}
