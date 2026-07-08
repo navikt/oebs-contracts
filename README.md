@@ -39,19 +39,3 @@ oebs-schemas/
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
-
-### 3. Configure authentication
-
-GitHub Packages requires authentication. Add the following to your `~/.m2/settings.xml`:
-
-```xml
-<settings>
-    <servers>
-        <server>
-            <id>github</id>
-            <username>${env.GITHUB_ACTOR}</username>
-            <password>${env.GITHUB_TOKEN}</password>
-        </server>
-    </servers>
-</settings>
-```

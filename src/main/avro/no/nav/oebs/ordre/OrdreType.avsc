@@ -1,0 +1,8 @@
+{
+  "type": "enum",
+  "name": "OrdreType",
+  "namespace": "no.nav.oebs.ordre",
+  "symbols": ["REKVISISJON", "BESTILLING"],
+  "doc": "Type ordre"
+}
+
