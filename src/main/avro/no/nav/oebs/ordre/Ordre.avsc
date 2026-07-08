@@ -4,23 +4,29 @@
   "namespace": "no.nav.oebs.ordre",
   "fields": [
     {
-      "name": "ordreId",
+      "name": "fodselNummer",
       "type": "string",
-      "doc": "Unik identifikator for ordren"
+      "doc": "Fødselsnummer til personen som ordren gjelder for"
     },
     {
-      "name": "beskrivelse",
-      "type": ["null", "string"],
-      "default": null,
-      "doc": "Beskrivelse av ordren"
+      "name": "formidlerNavn",
+      "type": "string",
+      "doc": "Navn på formidler"
     },
     {
-      "name": "opprettetTidspunkt",
-      "type": {
-        "type": "long",
-        "logicalType": "timestamp-millis"
-      },
-      "doc": "Tidspunkt ordren ble opprettet (epoch millisekunder)"
+      "name": "ordreType",
+      "type": "no.nav.oebs.ordre.OrdreType",
+      "doc": "Type ordre"
+    },
+    {
+      "name": "saksNummer",
+      "type": "string",
+      "doc": "Saksnummer"
+    },
+    {
+      "name": "requestId",
+      "type": "string",
+      "doc": "Unik identifikator for forespørselen"
     }
   ]
 }
