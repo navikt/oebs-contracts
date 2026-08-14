@@ -1,19 +1,26 @@
 # oebs-contracts
 
-Shared contracts for the OEBS domain — Avro schemas for Kafka topics and (later) OpenAPI specifications.
+Shared contracts for the OEBS domain — Avro schemas for Kafka topics and OpenAPI specifications.
 
 ## Repository structure
 
 ```
-oebs-schemas/
-├── src/main/avro/
-│   └── no/nav/oebs/ordre/
-│       └── Ordre.avsc          # Avro schema for the Ordre Kafka topic
-├── openapi/                    # OpenAPI specifications (coming soon)
-├── pom.xml                     # Builds and publishes JAR to GitHub Packages
+oebs-contracts/
+├── src/
+│   └── main/
+│       ├── avro/
+│       │   └── no/nav/oebs/ordre/
+│       │       ├── Ordre.avsc          # Avro schema for the Ordre Kafka topic
+│       │       └── OrdreType.avsc
+│       └── resources/
+│           └── static/
+│               └── openapi/
+│                   └── okonomimodell/
+│                       └── openapi.yaml  # OpenAPI spec, served as static resource
+├── pom.xml                               # Builds and publishes JAR to GitHub Packages
 └── .github/
     └── workflows/
-        └── publish.yml         # Publishes on push to main
+        └── publish.yml                   # Publishes on push to main
 ```
 
 ## How to consume
@@ -38,4 +45,20 @@ oebs-schemas/
     <artifactId>oebs-contracts</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
+```
+
+### Avro schemas
+
+The JAR contains generated Java classes from the Avro schemas. Use them directly in your Kafka producers/consumers.
+
+### OpenAPI specifications
+
+The YAML files are included as static resources in the JAR and served automatically by Spring Boot at `/openapi/<service>/openapi.yaml`.
+
+Configure springdoc to use the spec:
+
+```yaml
+springdoc:
+  swagger-ui:
+    url: /openapi/okonomimodell/openapi.yaml
 ```
