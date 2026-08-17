@@ -23,7 +23,9 @@ oebs-contracts/
         └── publish.yml                   # Publishes on push to main
 ```
 
-## How to consume
+## Avro Schemas for Kafka
+
+The JAR contains generated Java classes from the Avro schemas. Use them directly in your Kafka producers/consumers.
 
 ### 1. Add the GitHub Packages repository to your `pom.xml`
 
@@ -47,11 +49,7 @@ oebs-contracts/
 </dependency>
 ```
 
-### Avro schemas
-
-The JAR contains generated Java classes from the Avro schemas. Use them directly in your Kafka producers/consumers.
-
-### OpenAPI specifications
+## OpenAPI specifications
 
 ### Generating a client from the OpenAPI spec
 
