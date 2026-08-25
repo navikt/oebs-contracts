@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "Artikkel",
+  "namespace": "no.nav.oebs.ordre",
+  "fields": [
+    {
+      "name": "artikkelNummer",
+      "type": "int",
+      "doc": "Identifikator for artikkelen"
+    },
+    {
+      "name": "antall",
+      "type": "int",
+      "doc": "Antall av artikkelen"
+    }
+  ]
+}
