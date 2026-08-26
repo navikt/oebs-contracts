@@ -1,0 +1,39 @@
+{
+  "type": "record",
+  "name": "OrdreKvittering",
+  "namespace": "no.nav.oebs.ordre",
+  "fields": [
+    {
+      "name": "system",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Ekstern system id for ordren. TODO: avklar hvem som eier og definerer denne"
+    },
+    {
+      "name": "id",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Intern OeBS id for ordren. TODO: vurder å slette eller gi nytt navn"
+    },
+    {
+      "name": "saksNummer",
+      "type": "string",
+      "doc": "Internt nummer fra oppretter av ordren"
+    },
+    {
+      "name": "ordreNummer",
+      "type": "int",
+      "doc": "Unik identifikator for ordren"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "OrdreStatus",
+        "symbols": ["MOTTATT", "BEHANDLET", "FEILET"],
+        "doc": "TODO: avklar alle mulige statuser med OeBS"
+      },
+      "doc": "Status for ordren"
+    }
+  ]
+}

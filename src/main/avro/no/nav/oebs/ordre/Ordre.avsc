@@ -14,19 +14,20 @@
       "doc": "Navn på formidler"
     },
     {
-      "name": "ordreType",
-      "type": "no.nav.oebs.ordre.OrdreType",
-      "doc": "Type ordre"
-    },
-    {
       "name": "saksNummer",
       "type": "string",
-      "doc": "Saksnummer"
+      "doc": "Saksnummer. TODO: avklar om dette fungerer som requestId eller om det trengs i tillegg"
     },
     {
-      "name": "requestId",
-      "type": "string",
-      "doc": "Unik identifikator for forespørselen"
+      "name": "artikler",
+      "type": {"type": "array", "items": "no.nav.oebs.ordre.Artikkel"},
+      "doc": "Artikler som inngår i ordren"
+    },
+    {
+      "name": "leveringsInfo",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Frittfelt notat med informasjon relatert til levering"
     }
   ]
 }
