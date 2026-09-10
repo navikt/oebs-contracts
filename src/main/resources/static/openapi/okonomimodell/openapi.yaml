@@ -11,7 +11,7 @@ servers:
   - url: 'https://okonomimodell-api-q1.ekstern.dev.nav.no/api/v1'
     description: preprod environment
   - url: 'https://okonomimodell-api.ekstern.nav.no/api/v1'
-    description: preprod environment
+    description: production environment
 
 security:
   - BearerAuth: []
@@ -44,6 +44,7 @@ components:
       type: string
       enum:
         - LONN
+        - VIERI
     relasjon:
       type: object
       properties:
@@ -79,6 +80,18 @@ components:
           items:
             $ref: '#/components/schemas/relasjon'
           description: Relation to other segments
+    kontostrengValidation:
+      type: object
+      required:
+        - valid
+      properties:
+        valid:
+          type: boolean
+          description: indikerer om konostrengen er gyldig
+        feilmeldingOebs:
+          type: string
+          nullable: true
+          description: Feilmelding fra OeBS dersom kontostrengen er ugyldig
 
 paths:
   /segmenter:
@@ -168,13 +181,18 @@ paths:
         '500':
           description: Internal Server Error
 
-  /validatekontostreng:
+  /kontostreng/validering:
     get:
       operationId: validateKontostreng
       summary: Validate a kontostreng
       security:
         - BearerAuth: []
       parameters:
+        - name: system
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/system'
         - name: artskonto
           in: query
           required: false
@@ -253,8 +271,10 @@ paths:
           content:
             application/json:
               schema:
-                type: boolean
-              example: true
+                $ref: '#/components/schemas/kontostrengValidation'
+              example:
+                valid: false
+                feilmeldingOebs: "Ugyldig artskonto"
         '400':
           description: Invalid input parameters
         '500':
