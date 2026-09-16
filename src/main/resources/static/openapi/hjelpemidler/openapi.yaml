@@ -1,0 +1,141 @@
+openapi: 3.0.4
+info:
+  title: Hjelpemidler API
+  description: Select server that corresponds to the environment you want to use.
+  version: 1.0.0
+servers:
+  - url: 'https://hjelpemidler-api.intern.dev.nav.no/api/v1'
+    description: test environment
+  - url: 'http://localhost:8080/api/v1'
+    description: local environment
+  - url: 'https://hjelpemidler-api.intern.nav.no/api/v1'
+    description: production environment
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    brukernummer:
+      type: string
+      pattern: '^[0-9]+$'
+      description: Brukernummer for the user
+    fodselsnummer:
+      type: string
+      pattern: '^[0-9]{11}$'
+      description: Fødselsnummer (11 siffer)
+    adresse:
+      type: object
+      properties:
+        gateadresse:
+          type: string
+        postnummer:
+          type: string
+        by:
+          type: string
+        kommune:
+          type: string
+        bydel:
+          type: string
+          nullable: true
+
+    bruker:
+      type: object
+      properties:
+        brukernummer:
+          $ref: '#/components/schemas/brukernummer'
+        fodselsnummer:
+          $ref: '#/components/schemas/fodselsnummer'
+        adresse:
+          $ref: '#/components/schemas/adresse'
+        leveringsadresse:
+          $ref: '#/components/schemas/adresse'
+        #Diverse statuser og primæradresse? Hvorfor skal det med?
+
+paths:
+  /bruker/{fnr}:
+    get:
+      operationId: getBruker
+      summary: Get segments by segmentType and optionally filter by lastUpdateDate
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: fnr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/fodselsnummer'
+      responses:
+        '200':
+          description: Bruker get for a given fødselsnummer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bruker'
+              example: "test"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
+  /bruker/brukernummer/{fnr}:
+    get:
+      operationId: getBrukernummer
+      security:
+        - BearerAuth: []
+      summary: Get brukernummer for a given fødselsnummer
+      parameters:
+        - name: fnr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/fodselsnummer'
+      responses:
+        '200':
+          description: List of all segments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/brukernummer"
+              example:
+                "brukernummer": "123456789"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
+  /bruker/fodselsnummer/{brukernummer}:
+    get:
+      operationId: getFodselsnummer
+      security:
+        - BearerAuth: []
+      summary: Get fodselsnummer for a given brukernummer
+      parameters:
+        - name: brukernummer
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/brukernummer'
+      responses:
+        '200':
+          description: Fodselsnummer for given brukernummer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/fodselsnummer"
+              example:
+                "brukernummer": "123456789"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
