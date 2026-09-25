@@ -30,6 +30,9 @@ components:
       type: string
       pattern: '^[0-9]{11}$'
       description: Fødselsnummer (11 siffer)
+    status:
+      type: boolean
+      description: Indicates whether the user is active or not
     adresse:
       type: object
       properties:
@@ -44,6 +47,28 @@ components:
         bydel:
           type: string
           nullable: true
+    brukerpass:
+      type: object
+      properties:
+        kontraktnr:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+
+    artikkel:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        beskrivelse:
+          type: string
+
 
     bruker:
       type: object
@@ -52,6 +77,8 @@ components:
           $ref: '#/components/schemas/brukernummer'
         fodselsnummer:
           $ref: '#/components/schemas/fodselsnummer'
+        status:
+          $ref: '#/components/schemas/status'
         adresse:
           $ref: '#/components/schemas/adresse'
         leveringsadresse:
@@ -133,6 +160,88 @@ paths:
                 $ref: "#/components/schemas/fodselsnummer"
               example:
                 "brukernummer": "123456789"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
+  /bruker/brukerpass/{fnr}:
+    get:
+      operationId: getBrukerPass
+      security:
+        - BearerAuth: []
+      summary: Get brukerpass for a given fodselsnummer
+      parameters:
+        - name: fnr
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/fodselsnummer'
+      responses:
+        '200':
+          description: Brukerpass for å given fodselsnummer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/brukerpass"
+              example:
+                "example": "testexample"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
+  /artikkel:
+    get:
+      operationId: getArtikler
+      security:
+        - BearerAuth: []
+      summary: Get all artikler
+      responses:
+        '200':
+          description: List of all artikler
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/artikkel'
+              example:
+                - id: "1"
+                  type: "type1"
+                  beskrivelse: "Beskrivelse av artikkel 1"
+                - id: "2"
+                  type: "type2"
+                  beskrivelse: "Beskrivelse av artikkel 2"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
+  /artikkel/{id}:
+    get:
+      operationId: getArtikkel
+      security:
+        - BearerAuth: []
+      summary: Get artikkel for a given id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artikkel for given id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/artikkel"
+              example:
+                "example": "testexample"
         '404':
           description: No segments found for the given segmentType
         '400':
