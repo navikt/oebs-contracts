@@ -26,7 +26,7 @@ components:
       type: string
       pattern: '^[0-9]+$'
       description: Brukernummer for the user
-    fodselsnummer:
+    fnr:
       type: string
       pattern: '^[0-9]{11}$'
       description: Fødselsnummer (11 siffer)
@@ -75,8 +75,8 @@ components:
       properties:
         brukernummer:
           $ref: '#/components/schemas/brukernummer'
-        fodselsnummer:
-          $ref: '#/components/schemas/fodselsnummer'
+        fnr:
+          $ref: '#/components/schemas/fnr'
         status:
           $ref: '#/components/schemas/status'
         adresse:
@@ -97,7 +97,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/fodselsnummer'
+            $ref: '#/components/schemas/fnr'
       responses:
         '200':
           description: Bruker get for a given fødselsnummer
@@ -123,7 +123,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/fodselsnummer'
+            $ref: '#/components/schemas/fnr'
       responses:
         '200':
           description: List of all segments
@@ -139,7 +139,7 @@ paths:
           description: Invalid input parameters
         '500':
           description: Internal Server Error
-  /bruker/fodselsnummer/{brukernummer}:
+  /bruker/fnr/{brukernummer}:
     get:
       operationId: getFodselsnummer
       security:
@@ -157,7 +157,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/fodselsnummer"
+                $ref: "#/components/schemas/fnr"
               example:
                 "brukernummer": "123456789"
         '404':
@@ -177,7 +177,7 @@ paths:
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/fodselsnummer'
+            $ref: '#/components/schemas/fnr'
       responses:
         '200':
           description: Brukerpass for å given fodselsnummer
