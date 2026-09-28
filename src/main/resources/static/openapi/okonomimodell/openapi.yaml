@@ -299,6 +299,7 @@ paths:
                 $ref: '#/components/schemas/kontostrengValidation'
               example:
                 valid: false
+                ccid: null
                 feilmeldingOebs: "Ugyldig artskonto"
         '400':
           description: Invalid input parameters
