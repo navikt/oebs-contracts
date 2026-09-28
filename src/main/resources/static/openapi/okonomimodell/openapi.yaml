@@ -107,11 +107,10 @@ paths:
       parameters:
         - name: x-correlation-id
           in: header
-          required: true
+          required: false #todo: change to true when zalaris is ready
           schema:
             type: string
             format: uuid
-            example: "a1b2c3d4-5678-90ab-cdef-1234567890ab"
           description: Korrelasjons-ID for sporing av forespørselen
         - name: system
           in: query
@@ -153,7 +152,7 @@ paths:
       parameters:
         - name: x-correlation-id
           in: header
-          required: true
+          required: false #todo: change to true when zalaris is ready
           schema:
             type: string
             format: uuid
