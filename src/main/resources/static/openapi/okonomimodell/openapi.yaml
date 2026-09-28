@@ -88,6 +88,10 @@ components:
         valid:
           type: boolean
           description: indikerer om konostrengen er gyldig
+        ccid:
+          type: string
+          nullable: true
+          description: Kontostrengens CCID dersom kontostrengen er gyldig
         feilmeldingOebs:
           type: string
           nullable: true
@@ -101,6 +105,13 @@ paths:
         - BearerAuth: []
       summary: Get all segments
       parameters:
+        - name: x-correlation-id
+          in: header
+          required: false #todo: change to true when zalaris is ready
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: system
           in: query
           required: false
@@ -139,6 +150,13 @@ paths:
       security:
         - BearerAuth: []
       parameters:
+        - name: x-correlation-id
+          in: header
+          required: false #todo: change to true when zalaris is ready
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: segmentType
           in: path
           required: true
@@ -188,6 +206,13 @@ paths:
       security:
         - BearerAuth: []
       parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: system
           in: query
           required: true
