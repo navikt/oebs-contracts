@@ -26,10 +26,49 @@ components:
       type: string
       pattern: '^[0-9]+$'
       description: Brukernummer for the user
-    fodselsnummer:
+    fnr:
       type: string
       pattern: '^[0-9]{11}$'
       description: Fødselsnummer (11 siffer)
+    brukernummerOppslagRequest:
+      type: object
+      required:
+        - fnr
+      properties:
+        fnr:
+          $ref: '#/components/schemas/fnr'
+    brukernummerOppslagResponse:
+      type: object
+      required:
+        - brukernummer
+      properties:
+        brukernummer:
+          $ref: '#/components/schemas/brukernummer'
+    status:
+      type: object
+      required:
+        - aktiv
+      properties:
+        aktiv:
+          type: boolean
+      description: Indicates whether the user is active or not
+    adresser:
+      type: object
+      description: Adresser for en bruker, inkludert primæradresse og eventuelle andre adresser
+      properties:
+        primaeradresse:
+          $ref: '#/components/schemas/personadresse'
+        adresser:
+          type: array
+          items:
+            $ref: '#/components/schemas/personadresse'
+    personadresse:
+      type: object
+      properties:
+        bostedsadresse:
+          $ref: '#/components/schemas/adresse'
+        leveringsadresse:
+          $ref: '#/components/schemas/adresse'
     adresse:
       type: object
       properties:
@@ -44,81 +83,43 @@ components:
         bydel:
           type: string
           nullable: true
-
-    bruker:
+    brukerpass:
       type: object
       properties:
-        brukernummer:
-          $ref: '#/components/schemas/brukernummer'
-        fodselsnummer:
-          $ref: '#/components/schemas/fodselsnummer'
-        adresse:
-          $ref: '#/components/schemas/adresse'
-        leveringsadresse:
-          $ref: '#/components/schemas/adresse'
-        #Diverse statuser og primæradresse? Hvorfor skal det med?
+        kontraktnr:
+          type: string
+        startdato:
+          type: string
+          format: date
+        sluttdato:
+          type: string
+          format: date
+
+    artikkel:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        beskrivelse:
+          type: string
 
 paths:
-  /bruker/{fnr}:
+  /bruker/{brukernummer}/status:
     get:
-      operationId: getBruker
-      summary: Get segments by segmentType and optionally filter by lastUpdateDate
+      operationId: getBrukerStatus
+      summary: Get status for a given brukernummer
       security:
         - BearerAuth: []
       parameters:
-        - name: fnr
-          in: path
+        - name: x-correlation-id
+          in: header
           required: true
           schema:
-            $ref: '#/components/schemas/fodselsnummer'
-      responses:
-        '200':
-          description: Bruker get for a given fødselsnummer
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/bruker'
-              example: "test"
-        '404':
-          description: No segments found for the given segmentType
-        '400':
-          description: Invalid input parameters
-        '500':
-          description: Internal Server Error
-  /bruker/brukernummer/{fnr}:
-    get:
-      operationId: getBrukernummer
-      security:
-        - BearerAuth: []
-      summary: Get brukernummer for a given fødselsnummer
-      parameters:
-        - name: fnr
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/fodselsnummer'
-      responses:
-        '200':
-          description: List of all segments
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/brukernummer"
-              example:
-                "brukernummer": "123456789"
-        '404':
-          description: No segments found for the given segmentType
-        '400':
-          description: Invalid input parameters
-        '500':
-          description: Internal Server Error
-  /bruker/fodselsnummer/{brukernummer}:
-    get:
-      operationId: getFodselsnummer
-      security:
-        - BearerAuth: []
-      summary: Get fodselsnummer for a given brukernummer
-      parameters:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: brukernummer
           in: path
           required: true
@@ -126,13 +127,210 @@ paths:
             $ref: '#/components/schemas/brukernummer'
       responses:
         '200':
-          description: Fodselsnummer for given brukernummer
+          description: Status for a given brukernummer
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/fodselsnummer"
+                $ref: '#/components/schemas/status'
               example:
-                "brukernummer": "123456789"
+                aktiv: true
+        '404':
+          description: No status found for the given brukernummer
+        '400':
+          description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
+        '500':
+          description: Internal Server Error
+  /bruker/oppslag:
+    post:
+      operationId: getBrukernummer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
+      summary: Get brukernummer for a given fødselsnummer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/brukernummerOppslagRequest'
+      responses:
+        '200':
+          description: Brukernummer for a given fødselsnummer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/brukernummerOppslagResponse'
+              example:
+                brukernummer: "123456789"
+        '404':
+          description: No brukernummer found for the given fødselsnummer
+        '400':
+          description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
+        '500':
+          description: Internal Server Error
+  /bruker/{brukernummer}/adresser:
+    get:
+      operationId: getAdresser
+      security:
+        - BearerAuth: []
+      summary: Get adresser for a given brukernummer
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
+        - name: brukernummer
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/brukernummer'
+      responses:
+        '200':
+          description: Adresser for a given brukernummer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/adresser"
+              example:
+                primaeradresse:
+                  bostedsadresse:
+                    gateadresse: "Storgata 1"
+                    postnummer: "0123"
+                    by: "Oslo"
+                    kommune: "0301"
+                    bydel: "Gamle Oslo"
+                adresser:
+                  - bostedsadresse:
+                      gateadresse: "Storgata 1"
+                      postnummer: "0123"
+                      by: "Oslo"
+                      kommune: "0301"
+                      bydel: "Gamle Oslo"
+                    leveringsadresse:
+                      gateadresse: "Postboks 1"
+                      postnummer: "0101"
+                      by: "Oslo"
+                      kommune: "0301"
+                      bydel: null
+        '404':
+          description: No addresses found for the given brukernummer
+        '400':
+          description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
+        '500':
+          description: Internal Server Error
+  /bruker/{brukernummer}/brukerpass:
+    get:
+      operationId: getBrukerPass
+      security:
+        - BearerAuth: []
+      summary: Get brukerpass for a given brukernummer
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
+        - name: brukernummer
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/brukernummer'
+      responses:
+        '200':
+          description: Brukerpass for a given brukernummer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/brukerpass"
+              example:
+                - kontraktnr: "K-123456"
+                  startdato: "2026-01-01"
+                  sluttdato: "2026-12-31"
+        '404':
+          description: No brukerpass found for the given brukernummer
+        '400':
+          description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
+        '500':
+          description: Internal Server Error
+  /artikkel:
+    get:
+      operationId: getArtikler
+      security:
+        - BearerAuth: []
+      summary: Get all artikler
+      responses:
+        '200':
+          description: List of all artikler
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/artikkel'
+              example:
+                - id: "1"
+                  type: "type1"
+                  beskrivelse: "Beskrivelse av artikkel 1"
+                - id: "2"
+                  type: "type2"
+                  beskrivelse: "Beskrivelse av artikkel 2"
+        '404':
+          description: No segments found for the given segmentType
+        '400':
+          description: Invalid input parameters
+        '500':
+          description: Internal Server Error
+  /artikkel/{id}:
+    get:
+      operationId: getArtikkel
+      security:
+        - BearerAuth: []
+      summary: Get artikkel for a given id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artikkel for given id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/artikkel"
+              example:
+                "example": "testexample"
         '404':
           description: No segments found for the given segmentType
         '400':
