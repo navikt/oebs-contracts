@@ -137,6 +137,10 @@ paths:
           description: No status found for the given brukernummer
         '400':
           description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
         '500':
           description: Internal Server Error
   /bruker/oppslag:
@@ -167,11 +171,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/brukernummerOppslagResponse'
               example:
-                "brukernummer": "123456789"
+                brukernummer: "123456789"
         '404':
           description: No brukernummer found for the given fødselsnummer
         '400':
           description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
         '500':
           description: Internal Server Error
   /bruker/{brukernummer}/adresser:
@@ -225,6 +233,10 @@ paths:
           description: No addresses found for the given brukernummer
         '400':
           description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
         '500':
           description: Internal Server Error
   /bruker/{brukernummer}/brukerpass:
@@ -256,13 +268,17 @@ paths:
                 items:
                   $ref: "#/components/schemas/brukerpass"
               example:
-                kontraktnr: "K-123456"
-                startdato: "2026-01-01"
-                sluttdato: "2026-12-31"
+                - kontraktnr: "K-123456"
+                  startdato: "2026-01-01"
+                  sluttdato: "2026-12-31"
         '404':
           description: No brukerpass found for the given brukernummer
         '400':
           description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
         '500':
           description: Internal Server Error
   /artikkel:
