@@ -112,6 +112,13 @@ paths:
       security:
         - BearerAuth: []
       parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: brukernummer
           in: path
           required: true
@@ -137,6 +144,14 @@ paths:
       operationId: getBrukernummer
       security:
         - BearerAuth: []
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
       summary: Get brukernummer for a given fødselsnummer
       requestBody:
         required: true
@@ -166,6 +181,13 @@ paths:
         - BearerAuth: []
       summary: Get adresser for a given brukernummer
       parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: brukernummer
           in: path
           required: true
@@ -212,6 +234,13 @@ paths:
         - BearerAuth: []
       summary: Get brukerpass for a given brukernummer
       parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
         - name: brukernummer
           in: path
           required: true
@@ -223,7 +252,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/brukerpass"
+                type: array
+                items:
+                  $ref: "#/components/schemas/brukerpass"
               example:
                 kontraktnr: "K-123456"
                 startdato: "2026-01-01"
