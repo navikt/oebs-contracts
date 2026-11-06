@@ -16,7 +16,19 @@
     {
       "name": "saksNummer",
       "type": "string",
-      "doc": "Saksnummer. TODO: avklar om dette fungerer som requestId eller om det trengs i tillegg"
+      "doc": "Saksnummer som ordren er knyttet til"
+    },
+    {
+      "name": "ordreType",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Kan foreløpig bare settes til BESTILLING."
+    },
+    {
+      "name": "ferdigstill",
+      "type": ["null", "boolean"],
+      "default": null,
+      "doc": "Indikerer om ordren skal ferdigstilles."
     },
     {
       "name": "artikler",
@@ -24,7 +36,7 @@
       "doc": "Artikler som inngår i ordren"
     },
     {
-      "name": "leveringsInfo",
+      "name": "forsendelsesInstruksjoner",
       "type": ["null", "string"],
       "default": null,
       "doc": "Frittfelt notat med informasjon relatert til levering"
