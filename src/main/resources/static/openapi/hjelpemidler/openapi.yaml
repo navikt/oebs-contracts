@@ -30,28 +30,26 @@ components:
       type: string
       pattern: '^[0-9]{11}$'
       description: Fødselsnummer (11 siffer)
-    brukernummerOppslagRequest:
+    aktiv: #todo: Skal den hete status eller aktiv, hva indikerer den?
+      type: boolean
+      description: Indicates whether the user is active or not
+    fnrRequestBody:
       type: object
       required:
         - fnr
       properties:
         fnr:
           $ref: '#/components/schemas/fnr'
-    brukernummerOppslagResponse:
+    bruker:
       type: object
       required:
         - brukernummer
+        - aktiv
       properties:
         brukernummer:
           $ref: '#/components/schemas/brukernummer'
-    status:
-      type: object
-      required:
-        - aktiv
-      properties:
         aktiv:
-          type: boolean
-      description: Indicates whether the user is active or not
+          $ref: '#/components/schemas/aktiv'
     adresser:
       type: object
       description: Adresser for en bruker, inkludert primæradresse og eventuelle andre adresser
@@ -106,10 +104,10 @@ components:
           type: string
 
 paths:
-  /bruker/{brukernummer}/status:
-    get:
-      operationId: getBrukerStatus
-      summary: Get status for a given brukernummer
+  /bruker/oppslag:
+    post:
+      operationId: getBruker
+      summary: Get status for a given fnr
       security:
         - BearerAuth: []
       parameters:
@@ -120,19 +118,21 @@ paths:
             type: string
             format: uuid
           description: Korrelasjons-ID for sporing av forespørselen på UUID format
-        - name: brukernummer
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/brukernummer'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fnrRequestBody'
       responses:
         '200':
-          description: Status for a given brukernummer
+          description: Brukernummer and status for a given fnr
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status'
+                $ref: '#/components/schemas/bruker'
               example:
+                brukernummer: "123456"
                 aktiv: true
         '404':
           description: No status found for the given brukernummer
@@ -144,47 +144,8 @@ paths:
           description: Forbidden (token uten nødvendige claims)
         '500':
           description: Internal Server Error
-  /bruker/oppslag:
+  /bruker/adresser/oppslag:
     post:
-      operationId: getBrukernummer
-      security:
-        - BearerAuth: []
-      parameters:
-        - name: x-correlation-id
-          in: header
-          required: true
-          schema:
-            type: string
-            format: uuid
-          description: Korrelasjons-ID for sporing av forespørselen på UUID format
-      summary: Get brukernummer for a given fødselsnummer
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/brukernummerOppslagRequest'
-      responses:
-        '200':
-          description: Brukernummer for a given fødselsnummer
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/brukernummerOppslagResponse'
-              example:
-                brukernummer: "123456789"
-        '404':
-          description: No brukernummer found for the given fødselsnummer
-        '400':
-          description: Invalid input parameters
-        '401':
-          description: Unauthorized (manglende/ugyldig token)
-        '403':
-          description: Forbidden (token uten nødvendige claims)
-        '500':
-          description: Internal Server Error
-  /bruker/{brukernummer}/adresser:
-    get:
       operationId: getAdresser
       security:
         - BearerAuth: []
@@ -197,11 +158,12 @@ paths:
             type: string
             format: uuid
           description: Korrelasjons-ID for sporing av forespørselen på UUID format
-        - name: brukernummer
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/brukernummer'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fnrRequestBody'
       responses:
         '200':
           description: Adresser for a given brukernummer
@@ -217,6 +179,12 @@ paths:
                     by: "Oslo"
                     kommune: "0301"
                     bydel: "Gamle Oslo"
+                  leveringsadresse:
+                    gateadresse: "Postboks 1"
+                    postnummer: "0101"
+                    by: "Oslo"
+                    kommune: "0301"
+                    bydel: null
                 adresser:
                   - bostedsadresse:
                       gateadresse: "Storgata 1"
@@ -240,8 +208,8 @@ paths:
           description: Forbidden (token uten nødvendige claims)
         '500':
           description: Internal Server Error
-  /bruker/{brukernummer}/brukerpass:
-    get:
+  /bruker/brukerpass/oppslag:
+    post:
       operationId: getBrukerPass
       security:
         - BearerAuth: []
@@ -254,11 +222,12 @@ paths:
             type: string
             format: uuid
           description: Korrelasjons-ID for sporing av forespørselen på UUID format
-        - name: brukernummer
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/brukernummer'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fnrRequestBody'
       responses:
         '200':
           description: Brukerpass for a given brukernummer
