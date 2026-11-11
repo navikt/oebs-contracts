@@ -4,13 +4,13 @@
   "namespace": "no.nav.oebs.ordre",
   "fields": [
     {
-      "name": "artikkelNummer",
-      "type": "int",
+      "name": "artikkelnummer",
+      "type": "string",
       "doc": "Identifikator for artikkelen"
     },
     {
       "name": "antall",
-      "type": "int",
+      "type": "string",
       "doc": "Antall av artikkelen"
     }
   ]
