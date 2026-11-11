@@ -4,7 +4,7 @@
   "namespace": "no.nav.oebs.ordre",
   "fields": [
     {
-      "name": "artikkelNummer",
+      "name": "artikkelnummer",
       "type": "string",
       "doc": "Identifikator for artikkelen"
     },
