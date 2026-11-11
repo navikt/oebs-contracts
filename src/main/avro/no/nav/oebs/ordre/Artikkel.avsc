@@ -5,12 +5,12 @@
   "fields": [
     {
       "name": "artikkelNummer",
-      "type": "int",
+      "type": "string",
       "doc": "Identifikator for artikkelen"
     },
     {
       "name": "antall",
-      "type": "int",
+      "type": "string",
       "doc": "Antall av artikkelen"
     }
   ]

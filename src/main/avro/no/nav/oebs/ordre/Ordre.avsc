@@ -4,7 +4,7 @@
   "namespace": "no.nav.oebs.ordre",
   "fields": [
     {
-      "name": "fodselNummer",
+      "name": "fnr",
       "type": "string",
       "doc": "Fødselsnummer til personen som ordren gjelder for"
     },
@@ -14,7 +14,7 @@
       "doc": "Navn på formidler"
     },
     {
-      "name": "saksNummer",
+      "name": "saksnummer",
       "type": "string",
       "doc": "Saksnummer som ordren er knyttet til"
     },
