@@ -52,21 +52,14 @@ components:
           $ref: '#/components/schemas/aktiv'
     adresser:
       type: object
-      description: Adresser for en bruker, inkludert primæradresse og eventuelle andre adresser
-      properties:
-        primaeradresse:
-          $ref: '#/components/schemas/personadresse'
-        adresser:
-          type: array
-          items:
-            $ref: '#/components/schemas/personadresse'
-    personadresse:
-      type: object
+      description: Adresser for en bruker
       properties:
         bostedsadresse:
           $ref: '#/components/schemas/adresse'
-        leveringsadresse:
-          $ref: '#/components/schemas/adresse'
+        leveringsadresser:
+          type: array
+          items:
+            $ref: '#/components/schemas/adresse'
     adresse:
       type: object
       properties:
@@ -107,7 +100,7 @@ paths:
   /bruker/oppslag:
     post:
       operationId: getBruker
-      summary: Get status for a given fnr
+      summary: Brukernummer og status for et gitt fnr
       security:
         - BearerAuth: []
       parameters:
@@ -149,7 +142,7 @@ paths:
       operationId: getAdresser
       security:
         - BearerAuth: []
-      summary: Get adresser for a given brukernummer
+      summary: Adresser for et gitt fnr
       parameters:
         - name: x-correlation-id
           in: header
@@ -166,40 +159,69 @@ paths:
               $ref: '#/components/schemas/fnrRequestBody'
       responses:
         '200':
-          description: Adresser for a given brukernummer
+          description: Adresser for et gitt fnr
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/adresser"
               example:
-                primaeradresse:
-                  bostedsadresse:
-                    gateadresse: "Storgata 1"
-                    postnummer: "0123"
-                    by: "Oslo"
-                    kommune: "0301"
-                    bydel: "Gamle Oslo"
-                  leveringsadresse:
-                    gateadresse: "Postboks 1"
+                bostedsadresse:
+                  gateadresse: "Storgata 1"
+                  postnummer: "0123"
+                  by: "Oslo"
+                  kommune: "0301"
+                  bydel: "Gamle Oslo"
+                leveringsadresser:
+                  - gateadresse: "Postboks 1"
                     postnummer: "0101"
                     by: "Oslo"
                     kommune: "0301"
                     bydel: null
-                adresser:
-                  - bostedsadresse:
-                      gateadresse: "Storgata 1"
-                      postnummer: "0123"
-                      by: "Oslo"
-                      kommune: "0301"
-                      bydel: "Gamle Oslo"
-                    leveringsadresse:
-                      gateadresse: "Postboks 1"
-                      postnummer: "0101"
-                      by: "Oslo"
-                      kommune: "0301"
-                      bydel: null
         '404':
           description: No addresses found for the given brukernummer
+        '400':
+          description: Invalid input parameters
+        '401':
+          description: Unauthorized (manglende/ugyldig token)
+        '403':
+          description: Forbidden (token uten nødvendige claims)
+        '500':
+          description: Internal Server Error
+  /bruker/bostedsadresse/oppslag:
+    post:
+      operationId: getBostedsadresse
+      security:
+        - BearerAuth: []
+      summary: Bostedsadresse som er gyldig for bruk i opprettelse av serviceforespørsel
+      parameters:
+        - name: x-correlation-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Korrelasjons-ID for sporing av forespørselen på UUID format
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/fnrRequestBody'
+      responses:
+        '200':
+          description: Bostedsadresse som er gyldig for bruk i opprettelse av serviceforespørsel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/adresse"
+              example:
+                gateadresse: "Storgata 1"
+                postnummer: "0123"
+                by: "Oslo"
+                kommune: "0301"
+                bydel: "Gamle Oslo"
+        '404':
+          description: No valid bostedsadresse found for the given fnr
         '400':
           description: Invalid input parameters
         '401':
@@ -213,7 +235,7 @@ paths:
       operationId: getBrukerPass
       security:
         - BearerAuth: []
-      summary: Get brukerpass for a given brukernummer
+      summary: Brukerpass for et gitt fnr
       parameters:
         - name: x-correlation-id
           in: header
@@ -230,7 +252,7 @@ paths:
               $ref: '#/components/schemas/fnrRequestBody'
       responses:
         '200':
-          description: Brukerpass for a given brukernummer
+          description: Brukerpass for et gitt fnr
           content:
             application/json:
               schema:
