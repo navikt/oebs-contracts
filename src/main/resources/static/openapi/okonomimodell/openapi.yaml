@@ -10,7 +10,7 @@ servers:
     description: local environment
   - url: 'https://okonomimodell-api-q1.ekstern.dev.nav.no/api/v1'
     description: preprod environment
-  - url: 'https://okonomimodell-api.ekstern.nav.no/api/v1'
+  - url: 'https://okonomimodell-api.nav.no/api/v1'
     description: production environment
 
 security:
